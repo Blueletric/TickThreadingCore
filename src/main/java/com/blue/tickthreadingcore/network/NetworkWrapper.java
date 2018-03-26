@@ -21,7 +21,38 @@ public class NetworkWrapper {
 	}
 
 
-	public void registerPacket(class<? extends AbstractPacket> packetclazz) {
+	public void registerPacket(Class<? extends AbstractPacket> packetClazz) {
+		registerPacketClient(packetClazz);
+		registerPacketServer(packetClazz);
+	}
+
+
+	public void registerPacketClient(Class<? extends AbstractPacket> packetClazz) {
+		registerPacketImpl(packetClazz, Side.CLIENT);
+	}
+
+
+	public void registerPacketServer(Class<? extends AbstractPacket> packetClazz) {
+		registerPacketImpl(packetClazz, Side.SERVER);
+	}
+
+
+	public void registerPacketImpl(Class<? extends AbstractPacket> packetClazz, Side side) {
+		network.registerMessage(handler, packetClazz, id++, side);
+	}
+
+
+	public static class AbstractPacketHandler implements IMessageHandler<AbstractPacket, IMessage> {
+
+		@Override
+		public IMessage onMessage(AbstractPacket packet, MessageContext ctx) {
+			if(ctx.side == Side.SERVER) {
+				return packet.handleServer(ctx.getServerHandler());
+			}
+			else {
+				return packet.handleClient(ctx.getClientHandler());
+			}
+		}
 
 	}
 }
