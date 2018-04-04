@@ -75,3 +75,11 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+def commonManifest = {
+    attributes 'FMLCorePlugin': 'com.blue.tickthreadingcore.TickThreadingCore'
+}
+
+jar {
+    manifest commonManifest
+}
